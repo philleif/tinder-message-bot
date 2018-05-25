@@ -1,0 +1,26 @@
+{
+  "name": "tinder-schedule-bot",
+  "version": "1.0.0",
+  "description": "Tinder bot with scheduling capability",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/philleif/tinder-schedule-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/philleif/tinder-schedule-bot/issues"
+  },
+  "homepage": "https://github.com/philleif/tinder-schedule-bot#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "dotenv": "^5.0.1",
+    "mongoose": "^5.1.2",
+    "tinder-client": "^2.0.4",
+    "tinderjs": "^1.0.8"
+  }
+}
