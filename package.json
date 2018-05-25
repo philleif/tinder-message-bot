@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/philleif/tinder-schedule-bot#readme",
   "dependencies": {
+    "agenda": "^1.0.3",
     "axios": "^0.18.0",
     "dotenv": "^5.0.1",
     "mongoose": "^5.1.2",

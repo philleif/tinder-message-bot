@@ -2,32 +2,66 @@
 
 require("dotenv").config()
 
-const { TinderClient } = require('tinder-client')
+const { TinderClient } = require("tinder-client")
 const db = require("../lib/db")
+const Agenda = require("agenda")
 
+const message = "[🤖] Hi! I like you too. Let's go out? " + process.env.URL
 const facebookUserId = process.env.FACEBOOK_ID
 const facebookToken = process.env.FACEBOOK_TOKEN
+const agenda = new Agenda({ db: { address: process.env.DB_URL } })
 
 const run = async () => {
-  const client = await TinderClient.create({ facebookUserId, facebookToken })
-  const matches = await client.client({
-    method: 'get',
-    url: `/v2/matches`,
-  }).then(response => response.data)
+  try {
+    agenda.on("ready", async () => {
+      await db.AgendaJob.remove()
 
-  // save current matches so we don't re-message them (one-time)
-  for (let match of matches.data.matches) {
-    let newMatch = new db.Match({
-      matchId: match._id
+      console.log("Starting bot...")
+
+      agenda.every("1 minutes", "handle matches")
+      agenda.start()
     })
-
-    await newMatch.save()
+  } catch (error) {
+    throw error
   }
-  // is this a new match?
-
-  // if so, send them the scheduling message
-  // save match id so we don't re-message them
-
 }
+
+agenda.define("handle matches", async (job, done) => {
+  try {
+    const client = await TinderClient.create({ facebookUserId, facebookToken })
+    const matches = await client
+      .client({
+        method: "get",
+        url: `/v2/matches`
+      })
+      .then(response => response.data)
+
+    for (let match of matches.data.matches) {
+      // is this a new match?
+      let currentMatch = await db.Match.findOne({
+        matchId: match._id
+      })
+
+      // if so, send them the scheduling message
+      // save match id so we don't re-message them
+      if (!currentMatch) {
+        console.log("New match!", newMatch)
+
+        let newMatch = new db.Match({ matchId: match._id })
+
+        await newMatch.save()
+
+        await client.messageMatch({
+          matchId: match._id,
+          message: message
+        })
+      }
+    }
+    done()
+  } catch (error) {
+    console.log(error)
+    done()
+  }
+})
 
 run()
