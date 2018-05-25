@@ -45,7 +45,7 @@ agenda.define("handle matches", async (job, done) => {
       // if so, send them the scheduling message
       // save match id so we don't re-message them
       if (!currentMatch) {
-        console.log("New match!", newMatch)
+        console.log("New match!", match.person.name, "-", match.person.bio)
 
         let newMatch = new db.Match({ matchId: match._id })
 
